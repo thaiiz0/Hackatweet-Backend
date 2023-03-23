@@ -7,7 +7,6 @@ const User = require('../models/users');
 
 // Création du tweet.
  router.post('/createTweet', (req, res) => {
-    const date = new Date();
     User.findOne({username: req.body.username})
     .then(data => {
         if(data){
@@ -16,11 +15,8 @@ const User = require('../models/users');
             firstname: req.body.firstname,
             username: req.body.username,
             message: req.body.message,
-            /* nbLike: req.body.nbLike,
-            date: date,
-            isLiked: false,
-            hashtags
-             */
+            date: new Date(),
+            nbLiked: 0,       
         });
 
     newTweet.save().then(newDoc => {
@@ -40,10 +36,9 @@ const User = require('../models/users');
  });
 
 
-
  // Supprimer tweet.
- router.delete('/deleteTweet/:_id', (req, res) => {
-    Tweet.findByIdAndDelete({ _id: req.paramq._id })
+ router.delete('/:id', (req, res) => {
+    Tweet.findByIdAndDelete({ _id: req.params.id })
     .then(data => {
         if (data) {
             res.json({result: true, data: data})
@@ -53,10 +48,6 @@ const User = require('../models/users');
         }
     }); 
  });
-
-
-
-
 
 
 module.exports = router;
