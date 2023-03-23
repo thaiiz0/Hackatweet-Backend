@@ -4,10 +4,10 @@ const tweetSchema = mongoose.Schema({
   firstname: String,  
   username: String,
   message: String,
-  /* date: Date,
+  /* nbLike: Number,
+  date: Date,
   isLiked: Boolean,
-  avatar: String,
-  nbLike: Number,
+  
   hashtags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'hashtags' }], */
 });
 

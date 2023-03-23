@@ -16,10 +16,11 @@ const User = require('../models/users');
             firstname: req.body.firstname,
             username: req.body.username,
             message: req.body.message,
-            /* date: date,
-            avatar: req.body.avatar,
-            nbLike: req.body.nbLike,
-            isLiked: false, */
+            /* nbLike: req.body.nbLike,
+            date: date,
+            isLiked: false,
+            hashtags
+             */
         });
 
     newTweet.save().then(newDoc => {
@@ -38,10 +39,20 @@ const User = require('../models/users');
     });
  });
 
+
+
  // Supprimer tweet.
- router.delete('/deleteTweet', (req, res) => {
-    
- })
+ router.delete('/deleteTweet/:_id', (req, res) => {
+    Tweet.findByIdAndDelete({ _id: req.paramq._id })
+    .then(data => {
+        if (data) {
+            res.json({result: true, data: data})
+        }
+        else {
+            res.json({result: false, error: 'Tweet not found'})
+        }
+    }); 
+ });
 
 
 
