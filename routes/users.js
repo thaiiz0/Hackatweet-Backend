@@ -35,7 +35,6 @@ router.post('/signup', (req, res) => {
     });
 
 
-
     // Connexion Compte :
     router.post('/signin', (req, res) => {
         if (!checkBody(req.body, ['username', 'password'])) {

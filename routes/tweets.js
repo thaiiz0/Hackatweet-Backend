@@ -6,23 +6,21 @@ const Tweet = require('../models/tweets');
 const User = require('../models/users');
 
 
-
-// Création du tweet.
+// Création du tweet.({ username: { $regex: new RegExp(req.body.username, 'i') } }).
  router.post('/createTweet', (req, res) => {
-    const pattern = /s([#][\w_-]+)/;
-
-    User.findOne({username: req.body.username})
+   // const pattern = /s([#][\w_-]+)/;
+    
+    User.findOne({username: {$regex: new RegExp(req.body.username, 'i')}  })
     .then(data => {
-        if(data){
-
+        if(data) {
            const newTweet = new Tweet({
             firstname: req.body.firstname,
             username: req.body.username,
             message: req.body.message,
             date: new Date(),
-            nbLiked: 0, 
-            hashtags: message.match(pattern),         
-           
+            nbLiked: 0,
+            hashtags: Tweet.match(pattern),   
+
         });
 
     newTweet.save().then(newDoc => {
@@ -30,7 +28,8 @@ const User = require('../models/users');
     });        
     }
     })
- })
+ });
+
 
  // Récupérer tweet.
  router.get('/', (req, res) => {
@@ -39,6 +38,7 @@ const User = require('../models/users');
         res.json({data: data})
     });
  });
+
 
  // Supprimer tweet.
  router.delete('/:id', (req, res) => {
