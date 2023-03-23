@@ -26,7 +26,6 @@ const User = require('../models/users');
     })
  })
 
-
  // Récupérer tweet.
  router.get('/', (req, res) => {
     Tweet.find()
@@ -34,7 +33,6 @@ const User = require('../models/users');
         res.json({data: data})
     });
  });
-
 
  // Supprimer tweet.
  router.delete('/:id', (req, res) => {
