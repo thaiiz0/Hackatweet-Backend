@@ -5,8 +5,12 @@ require('../models/connection');
 const Tweet = require('../models/tweets');
 const User = require('../models/users');
 
+
+
 // Création du tweet.
  router.post('/createTweet', (req, res) => {
+    const pattern = /s([#][\w_-]+)/;
+
     User.findOne({username: req.body.username})
     .then(data => {
         if(data){
@@ -16,7 +20,9 @@ const User = require('../models/users');
             username: req.body.username,
             message: req.body.message,
             date: new Date(),
-            nbLiked: 0,       
+            nbLiked: 0, 
+            hashtags: message.match(pattern),         
+           
         });
 
     newTweet.save().then(newDoc => {
