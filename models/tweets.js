@@ -3,10 +3,11 @@ const mongoose = require('mongoose');
 const tweetSchema = mongoose.Schema({
   firstname: String,  
   username: String,
-  message: String,
   date: Date,
+  message: String,
   nbLiked: Number,
-  hashtags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'hashtags' }], 
+  hashtags: [String],
+  likes: [String],
   
 });
 

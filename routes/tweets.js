@@ -4,13 +4,11 @@ var router = express.Router();
 require('../models/connection');
 const Tweet = require('../models/tweets');
 const User = require('../models/users');
+const Hashtag = require('../models/hashtags');
 
 
-// Création du tweet.({ username: { $regex: new RegExp(req.body.username, 'i') } }).
- router.post('/createTweet', (req, res) => {
-   // const pattern = /s([#][\w_-]+)/;
-    
-    User.findOne({username: {$regex: new RegExp(req.body.username, 'i')}  })
+ router.post('/createATweet', (req, res) => {
+    User.findOne({username: req.body.username})
     .then(data => {
         if(data) {
            const newTweet = new Tweet({
@@ -19,8 +17,8 @@ const User = require('../models/users');
             message: req.body.message,
             date: new Date(),
             nbLiked: 0,
-            hashtags: Tweet.match(pattern),   
-
+            hashtags: [],
+            likes: [],
         });
 
     newTweet.save().then(newDoc => {
@@ -28,24 +26,33 @@ const User = require('../models/users');
     });        
     }
     })
- });
+});
 
 
  // Récupérer tweet.
- router.get('/', (req, res) => {
+ router.get('/:token', (req, res) => {
     Tweet.find()
     .then(data => {
-        res.json({data: data})
-    });
- });
+        if(data) {
+            res.json({
+            firstname: req.body.firstname,
+            username: req.body.username,
+            date: new Date(),
+            message: req.body.message,
+            nbLiked: 0,
+            likes: [],
+            })
 
-
- // Supprimer tweet.
+        }
+    })
+ })
+ 
+   // Supprimer tweet.
  router.delete('/:id', (req, res) => {
     Tweet.findByIdAndDelete({ _id: req.params.id })
     .then(data => {
         if (data) {
-            res.json({result: true, data: data})
+            res.json({result: true, tweet_id: tweet_id })
         }
         else {
             res.json({result: false, error: 'Tweet not found'})
@@ -53,5 +60,33 @@ const User = require('../models/users');
     }); 
  });
 
+
+
+// get Tweets with specific hashtags.
+router.get("/:hashtag/:token", (req, res) => {
+    Tweet.find({ hashtag: req.params.hashtag })
+    .then((data) => {
+        if (data) {
+          res.json({ result: true, username: req.body.username, hashtags: req.body.hashtags, message: req.body.message });
+        } else {
+          res.json({ result: false });
+        }
+      }
+    );
+  });
+
+
+// Liké Tweets
+router.put("/likeATweet", (req, res) => {
+    Tweet.find({ username: req.body.username, token: req.body.token, tweetId: req.body.tweetId})
+    .then((data) => {
+        if (data) {
+            res.json({result: true, tweet_id: tweet_id, likes: req.body.likes})
+        } else {
+            res.json({result: false});
+        }
+    })
+})
+  
 
 module.exports = router;

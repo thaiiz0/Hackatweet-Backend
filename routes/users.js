@@ -51,6 +51,7 @@ router.post('/signup', (req, res) => {
         });
       });
 
+    // Log out du compte :
 
 
 
