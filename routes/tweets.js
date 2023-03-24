@@ -5,50 +5,55 @@ require('../models/connection');
 const Tweet = require('../models/tweets');
 const User = require('../models/users');
 const Hashtag = require('../models/hashtags');
+const { checkBody } = require('../modules/checkBody'); 
+
 
 
  router.post('/createATweet', (req, res) => {
-    User.findOne({username: req.body.username})
+    if (!checkBody(req.body, ['message'])) {
+        res.json({ result: false, error: 'Missing or empty fields' });
+        return;
+    }
+    
+    User.findOne({token: req.body.token})
     .then(data => {
         if(data) {
-           const newTweet = new Tweet({
+            const pattern = /\s([#][\w_-]+)/g;
+            const hashtags = req.body.message.match(pattern);
+            const newTweet = new Tweet({
             firstname: req.body.firstname,
             username: req.body.username,
             message: req.body.message,
+            token: req.body.token,
             date: new Date(),
-            nbLiked: 0,
-            hashtags: [],
-            likes: [],
+            nbLike: 0,
+            hashtags: hashtags,
+            isliked: false,
+
         });
 
-    newTweet.save().then(newDoc => {
-        res.json({tweet: newDoc})
+    newTweet.save().then(() =>  {
+        res.json({ result: true, message: newTweet})
     });        
     }
     })
 });
 
-
  // Récupérer tweet.
- router.get('/:token', (req, res) => {
-    Tweet.find()
-    .then(data => {
-        if(data) {
-            res.json({
-            firstname: req.body.firstname,
-            username: req.body.username,
-            date: new Date(),
-            message: req.body.message,
-            nbLiked: 0,
-            likes: [],
-            })
-
+ router.get("/", (req, res) => {
+    Tweet.find({ hashtag: req.params.hashtag }).then(
+      (data) => {
+        if (data) {
+          res.json({ result: true, data: data });
+        } else {
+          res.json({ result: false });
         }
-    })
- })
+      }
+    );
+  });
  
    // Supprimer tweet.
- router.delete('/:id', (req, res) => {
+ router.delete('/:token', (req, res) => {
     Tweet.findByIdAndDelete({ _id: req.params.id })
     .then(data => {
         if (data) {
@@ -59,7 +64,6 @@ const Hashtag = require('../models/hashtags');
         }
     }); 
  });
-
 
 
 // get Tweets with specific hashtags.
